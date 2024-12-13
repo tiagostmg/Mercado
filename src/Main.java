@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -6,22 +5,22 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         SqlFunctions SQL = new SqlFunctions();
-        ProdutoDAO ProdutoDAO = new ProdutoDAO();
+        ProductDAO ProductDAO = new ProductDAO();
 
         while (true) {
             System.out.println("Digite seu ID: ");
             String usuarioId = sc.nextLine().trim();
-            Cliente cliente = null;
+            Client client = null;
 
             if (usuarioId.equals("adm")) {
-                executarModoAdministrador(sc, ProdutoDAO, SQL);
+                executarModoAdministrador(sc, ProductDAO, SQL);
             } else {
                 try {
 
                     int id = Integer.parseInt(usuarioId);
-                    cliente = new Cliente(id);
+                    client = new Client(id);
 
-                    executarModoCliente(sc, cliente, ProdutoDAO);
+                    executarModoCliente(sc, client, ProductDAO);
 
                 } catch (NumberFormatException e) {
                     System.out.println("ID inválido! Tente novamente.");
@@ -30,7 +29,7 @@ public class Main {
         }
     }
 
-    private static void executarModoAdministrador(Scanner sc, ProdutoDAO produtoDAO, SqlFunctions SQL) {
+    private static void executarModoAdministrador(Scanner sc, ProductDAO productDAO, SqlFunctions SQL) {
         boolean modoAdm = true;
 
         while (modoAdm) {
@@ -43,7 +42,7 @@ public class Main {
                 boolean continuar = true;
 
                 while (continuar) {
-                    produtoDAO.select("SELECT * FROM produto");
+                    productDAO.select("SELECT * FROM produto");
                     SQL.select("SELECT * FROM cliente");
 
                     System.out.println("------------------------------------");
@@ -56,10 +55,10 @@ public class Main {
 
                     switch (opcao) {
                         case "1":
-                            adicionarProduto(sc, produtoDAO);
+                            adicionarProduto(sc, productDAO);
                             break;
                         case "2":
-                            alterarProduto(sc, produtoDAO);
+                            alterarProduto(sc, productDAO);
                             break;
                         case "3":
                             alterarSaldoCliente(sc, SQL);
@@ -79,7 +78,7 @@ public class Main {
         }
     }
 
-    private static void adicionarProduto(Scanner sc, ProdutoDAO produtoDAO) {
+    private static void adicionarProduto(Scanner sc, ProductDAO productDAO) {
         System.out.println("ADCIONAR PRODUTO");
         System.out.println("'exit' para cancelar");
         System.out.println("----------------");
@@ -95,14 +94,14 @@ public class Main {
         sc.nextLine(); // Limpar buffer
 
         if (!nomeProduto.isEmpty() && qtdProduto > 0 && precoProduto > 0) {
-            produtoDAO.insert(nomeProduto, qtdProduto, precoProduto);
+            productDAO.insert(nomeProduto, qtdProduto, precoProduto);
             System.out.println("Produto adicionado com sucesso!");
         } else {
             System.out.println("Erro: Verifique os dados do produto.");
         }
     }
 
-    private static void alterarProduto(Scanner sc, ProdutoDAO produtoDAO) {
+    private static void alterarProduto(Scanner sc, ProductDAO productDAO) {
         System.out.println("ALTERAR PRODUTO");
         System.out.println("'exit' para cancelar");
         System.out.println("----------------");
@@ -111,7 +110,7 @@ public class Main {
         String idProduto = sc.nextLine().trim();
         if (idProduto.equals("exit")) return;
 
-        produtoDAO.select("SELECT * FROM produto WHERE id = " + idProduto);
+        productDAO.select("SELECT * FROM produto WHERE id = " + idProduto);
 
         System.out.println("Insira o novo nome (* para manter):");
         String novoNome = sc.nextLine().trim();
@@ -122,7 +121,7 @@ public class Main {
         System.out.println("Insira o novo preço (* para manter):");
         String novoPreco = sc.nextLine().trim();
 
-        produtoDAO.update(
+        productDAO.update(
                 Integer.parseInt(idProduto),
                 novoNome.equals("*") ? null : novoNome,
                 novaQtd.equals("*") ? -1 : Integer.parseInt(novaQtd),
@@ -148,27 +147,27 @@ public class Main {
         sc.nextLine(); // Limpar buffer
 
         int id = Integer.parseInt(idCliente);
-        Cliente c = new Cliente(id);
+        Client c = new Client(id);
 
         c.setSaldo(novoSaldo);
         System.out.println("Saldo atualizado com sucesso!");
     }
 
-    private static void executarModoCliente(Scanner sc, Cliente cliente, ProdutoDAO produtoDAO) {
+    private static void executarModoCliente(Scanner sc, Client client, ProductDAO productDAO) {
 
         boolean continuar = true;
 
         while (continuar) {
             System.out.println("------------------------------------");
-            System.out.println("Olá, " + cliente.getNome());
-            System.out.println("Saldo: R$" + String.format("%.2f", cliente.getSaldo()));
+            System.out.println("Olá, " + client.getNome());
+            System.out.println("Saldo: R$" + String.format("%.2f", client.getSaldo()));
             System.out.println("1. Comprar");
             System.out.println("'exit' para sair");
             System.out.println("------------------------------------");
             String opcao = sc.nextLine().trim();
 
             if (opcao.equals("1")) {
-                realizarCompra(sc, cliente, produtoDAO);
+                realizarCompra(sc, client, productDAO);
             } else if (opcao.equals("exit")) {
                 continuar = false;
             } else {
@@ -177,20 +176,22 @@ public class Main {
         }
     }
 
-    private static void realizarCompra(Scanner sc, Cliente cliente, ProdutoDAO produtoDAO) {
-        produtoDAO.select("SELECT * FROM produto");
+    private static void realizarCompra(Scanner sc, Client client, ProductDAO productDAO) {
+
+        productDAO.select("SELECT * FROM produto");
+
         System.out.println("Digite o ID do produto a ser comprado:");
         int idProduto = sc.nextInt();
 
-        Produto produto = new Produto(idProduto);
+        Product product = new Product(idProduto);
 
         System.out.println("Digite a quantidade desejada:");
         int quantidade = sc.nextInt();
         sc.nextLine(); // Limpar buffer
 
-        if (quantidade <= produto.getQuantidade()) {
+        if (quantidade <= product.getQuantidade()) {
             MercadoDAO mercado = new MercadoDAO();
-            mercado.compra(cliente, produto, quantidade);
+            mercado.compra(client, product, quantidade);
             System.out.println("Compra realizada com sucesso!");
         } else {
             System.out.println("Quantidade insuficiente em estoque.");

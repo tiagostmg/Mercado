@@ -1,18 +1,17 @@
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class Cliente {
+public class Client {
 
     private final int id;
     private final String nome;
     private double saldo;
 
-    public Cliente(int id) {
+    public Client(int id) {
         SqlFunctions sql = new SqlFunctions();
 
         ArrayList<String> itens = new ArrayList<>();
@@ -24,9 +23,8 @@ public class Cliente {
         this.saldo = Double.parseDouble(itens.get(2));
     }
 
-    public Cliente getClienteById(int id) {
-        Cliente cliente = new Cliente(id);
-        return cliente;
+    public Client getClienteById(int id) {
+        return new Client(id);
     }
 
     public void imprimir() {

@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ProdutoDAO {
+public class ProductDAO {
 
     public void select(String comando) {
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -42,7 +42,7 @@ public class ProdutoDAO {
             int rowsAffected = pstmt.executeUpdate();
 
             if (rowsAffected > 0) {
-                Produto p = new Produto(nomeProduto.toLowerCase());
+                Product p = new Product(nomeProduto.toLowerCase());
                 System.out.println("------------------------------------");
                 System.out.println("Produto adicionado com sucesso:");
                 System.out.println(p.getId() + ". " + nomeProduto.toUpperCase() + " - R$" + String.format("%.2f", precoProduto) + " | QUANTIDADE: " + qtdProduto);

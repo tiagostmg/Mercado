@@ -5,14 +5,14 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class Produto {
+public class Product {
 
     private final int id;
     private final String nome;
     private final double preco;
     private int quantidade;
 
-    public Produto(int id) {
+    public Product(int id) {
         SqlFunctions sql = new SqlFunctions();
 
         ArrayList<String> itens = new ArrayList<>();
@@ -25,10 +25,10 @@ public class Produto {
         this.quantidade = Integer.parseInt(itens.get(3));
     }
 
-    public Produto(String nome) {
+    public Product(String nome) {
         SqlFunctions sql = new SqlFunctions();
 
-        ArrayList<String> itens = new ArrayList<>();
+        ArrayList<String> itens;
 
         itens = sql.selectByName("PRODUTO", nome);
 

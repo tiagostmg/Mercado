@@ -4,18 +4,18 @@ import java.sql.SQLException;
 
 public class MercadoDAO {
 
-    public void compra(Cliente cliente, Produto produto, int qtdCompra) {
+    public void compra(Client client, Product product, int qtdCompra) {
 
-        if (cliente == null || produto == null || qtdCompra <= 0) {
+        if (client == null || product == null || qtdCompra <= 0) {
             System.out.println("Dados inválidos para realizar a compra.");
             return;
         }
 
         try (Connection connection = DatabaseConnection.getConnection()) {
 
-            double saldoCliente = cliente.getSaldo();
-            int qtdProduto = produto.getQuantidade();
-            double precoProduto = produto.getPreco();
+            double saldoCliente = client.getSaldo();
+            int qtdProduto = product.getQuantidade();
+            double precoProduto = product.getPreco();
 
             if (qtdProduto >= qtdCompra) {
 
@@ -24,10 +24,10 @@ public class MercadoDAO {
                 if(saldoCliente >= valorTotal) {
 
                     int novaQuantidade = qtdProduto - qtdCompra;
-                    produto.setQuantidade(novaQuantidade);
+                    product.setQuantidade(novaQuantidade);
 
                     double novoSaldo = saldoCliente - valorTotal;
-                    cliente.setSaldo(novoSaldo);
+                    client.setSaldo(novoSaldo);
 
                     System.out.println("Compra realizada com sucesso!");
                     if(novaQuantidade == 0) {
