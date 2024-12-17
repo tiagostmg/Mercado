@@ -2,7 +2,6 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class Client {
@@ -14,28 +13,28 @@ public class Client {
     public Client(int id) {
         SqlFunctions sql = new SqlFunctions();
 
-        ArrayList<String> itens = new ArrayList<>();
+        ArrayList<String> items;
 
-        itens = sql.selectById("PRODUTO", id);
+        items = sql.selectById("CLIENTE", id);
 
-        this.id = Integer.parseInt(itens.get(0));
-        this.nome = itens.get(1);
-        this.saldo = Double.parseDouble(itens.get(2));
+        this.id = Integer.parseInt(items.get(0));
+        this.nome = items.get(1);
+        this.saldo = Double.parseDouble(items.get(2));
     }
 
-    public Client getClienteById(int id) {
-        return new Client(id);
-    }
+//    public Client getClienteById(int id) {
+//        return new Client(id);
+//    }
 
-    public void imprimir() {
-        DecimalFormat df = new DecimalFormat("#.00");
-        System.out.println(nome);
-        System.out.println("Saldo: " + df.format(saldo));
-    }
+//    public void imprimir() {
+//        DecimalFormat df = new DecimalFormat("#.00");
+//        System.out.println(nome);
+//        System.out.println("Saldo: " + df.format(saldo));
+//    }
 
-    public int getId() {
-        return id;
-    }
+//    public int getId() {
+//        return id;
+//    }
 
     public String getNome() {
         return nome;
@@ -58,7 +57,7 @@ public class Client {
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar o saldo do cliente");
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 }

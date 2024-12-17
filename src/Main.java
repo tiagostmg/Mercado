@@ -7,17 +7,20 @@ public class Main {
         SqlFunctions SQL = new SqlFunctions();
         ProductDAO ProductDAO = new ProductDAO();
 
-        while (true) {
+        boolean continuar = true;
+        while (continuar) {
             System.out.println("Digite seu ID: ");
-            String usuarioId = sc.nextLine().trim();
-            Client client = null;
+            String userId = sc.nextLine().trim();
+            Client client;
 
-            if (usuarioId.equals("adm")) {
+            if (userId.equals("adm")) {
                 executarModoAdministrador(sc, ProductDAO, SQL);
+            } else if (userId.equals("exit")) {
+                continuar = false;
             } else {
                 try {
 
-                    int id = Integer.parseInt(usuarioId);
+                    int id = Integer.parseInt(userId);
                     client = new Client(id);
 
                     executarModoCliente(sc, client, ProductDAO);
@@ -42,7 +45,7 @@ public class Main {
                 boolean continuar = true;
 
                 while (continuar) {
-                    productDAO.select("SELECT * FROM produto");
+                    productDAO.showProducts("SELECT * FROM produto");
                     SQL.select("SELECT * FROM cliente");
 
                     System.out.println("------------------------------------");
@@ -110,7 +113,7 @@ public class Main {
         String idProduto = sc.nextLine().trim();
         if (idProduto.equals("exit")) return;
 
-        productDAO.select("SELECT * FROM produto WHERE id = " + idProduto);
+        productDAO.showProducts("SELECT * FROM produto WHERE id = " + idProduto);
 
         System.out.println("Insira o novo nome (* para manter):");
         String novoNome = sc.nextLine().trim();
@@ -121,7 +124,7 @@ public class Main {
         System.out.println("Insira o novo preço (* para manter):");
         String novoPreco = sc.nextLine().trim();
 
-        productDAO.update(
+        ProductDAO.update(
                 Integer.parseInt(idProduto),
                 novoNome.equals("*") ? null : novoNome,
                 novaQtd.equals("*") ? -1 : Integer.parseInt(novaQtd),
@@ -178,7 +181,7 @@ public class Main {
 
     private static void realizarCompra(Scanner sc, Client client, ProductDAO productDAO) {
 
-        productDAO.select("SELECT * FROM produto");
+        productDAO.showProducts("SELECT * FROM produto");
 
         System.out.println("Digite o ID do produto a ser comprado:");
         int idProduto = sc.nextInt();

@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 public class ProductDAO {
 
-    public void select(String comando) {
+    public void showProducts(String comando) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(comando);
@@ -25,7 +25,7 @@ public class ProductDAO {
         }
         catch (SQLException e) {
             System.out.println("Erro ao realizar a consulta");
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 
@@ -53,7 +53,7 @@ public class ProductDAO {
             }
         } catch (SQLException e) {
             System.out.println("Erro ao inserir o produto no banco de dados.");
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 
@@ -77,26 +77,26 @@ public class ProductDAO {
 
         } catch (SQLException e) {
             System.out.println("Erro ao alterar o produto.");
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 
-    public int qtdItens(String tabela) {
-        int result = 0;
-
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM " + tabela);
-
-            if (rs.next()) {
-                result = rs.getInt(1);
-            }
-        }
-        catch (SQLException e) {
-            System.out.println("Erro ao realizar a consulta");
-            e.printStackTrace();
-        }
-        return result;
-
-    }
+//    public int qtdItens(String tabela) {
+//        int result = 0;
+//
+//        try (Connection connection = DatabaseConnection.getConnection()) {
+//            Statement stmt = connection.createStatement();
+//            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM " + tabela);
+//
+//            if (rs.next()) {
+//                result = rs.getInt(1);
+//            }
+//        }
+//        catch (SQLException e) {
+//            System.out.println("Erro ao realizar a consulta");
+//            e.printStackTrace(System.err);
+//        }
+//        return result;
+//
+//    }
 }

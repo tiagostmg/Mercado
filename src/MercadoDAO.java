@@ -11,7 +11,7 @@ public class MercadoDAO {
             return;
         }
 
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (Connection _ = DatabaseConnection.getConnection()) {
 
             double saldoCliente = client.getSaldo();
             int qtdProduto = product.getQuantidade();
@@ -44,7 +44,8 @@ public class MercadoDAO {
         }
         catch (SQLException e) {
             System.out.println("Erro ao realizar a consulta");
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
+
 }
