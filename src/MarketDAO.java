@@ -17,6 +17,7 @@ public class MarketDAO {
             double clientBalance = client.getBalance();
             int productQty = product.getQuantity();
             double productPrice = product.getPrice();
+            ProductDAO productDAO = new ProductDAO();
 
             if (productQty >= buyQty) {
 
@@ -25,10 +26,12 @@ public class MarketDAO {
                 if(clientBalance >= totalValue) {
 
                     int newQty = productQty - buyQty;
-                    product.setQuantity(newQty);
+                    productDAO.setProductQuantity(product, newQty);
 
                     double newBalance = clientBalance - totalValue;
-                    client.setBalance(newBalance);
+
+                    ClientDAO clientDAO = new ClientDAO();
+                    clientDAO.setClientBalance(client, newBalance);
 
                     if(newQty == 0) {
                         System.out.println("Estoque do produto zerado");

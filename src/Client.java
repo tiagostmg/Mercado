@@ -1,10 +1,3 @@
-
-import DataBase.DatabaseConnection;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 public class Client {
 
     private final int id;
@@ -21,6 +14,10 @@ public class Client {
         System.out.println(formatName() + " - ID: " + id + " | Saldo: " + String.format("%.2f", balance));
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -31,19 +28,6 @@ public class Client {
 
     public void setBalance(double balance) {
         this.balance = balance;
-        String updateQuery = "UPDATE CLIENTE SET saldo = ? WHERE id = ?";
-
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(updateQuery)) {
-
-            stmt.setDouble(1, balance);
-            stmt.setInt(2, id);
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Erro ao atualizar o saldo do cliente");
-            e.printStackTrace(System.err);
-        }
     }
 
     public String formatName(){

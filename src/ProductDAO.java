@@ -1,5 +1,8 @@
+import DataBase.DatabaseConnection;
 import DataBase.SqlFunctions;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -69,6 +72,30 @@ public class ProductDAO {
             System.out.println("Erro ao alterar o produto.");
             e.printStackTrace(System.err);
         }
+    }
+
+    public void setProductQuantity(Product product, int newQuantity){
+
+        if(product.getQuantity() >= 0) {
+
+            String updateQuery = "UPDATE PRODUTO SET quantidade = ? WHERE id = ?";
+
+            try (Connection connection = DatabaseConnection.getConnection();
+                 PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+
+                preparedStatement.setInt(1, newQuantity);
+                preparedStatement.setInt(2, product.getId());
+
+                preparedStatement.executeUpdate();
+
+                product.setQuantity(newQuantity);
+
+            } catch (SQLException e) {
+                System.out.println("Erro ao atualizar a quantidade do produto");
+                e.printStackTrace(System.err);
+            }
+        }
+
     }
 
 }

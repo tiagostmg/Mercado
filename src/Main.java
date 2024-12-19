@@ -1,13 +1,11 @@
-import DataBase.SqlFunctions;
-
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        SqlFunctions SQL = new SqlFunctions();
-        ProductDAO ProductDAO = new ProductDAO();
+        ProductDAO productDAO = new ProductDAO();
+        ClientDAO clientDAO = new ClientDAO();
 
         boolean continuar = true;
         while (continuar) {
@@ -16,17 +14,16 @@ public class Main {
             Client client;
 
             if (clientId.equals("adm")) {
-                executarModoAdministrador(sc, ProductDAO, SQL);
+                executarModoAdministrador(sc, productDAO, clientDAO);
             } else if (clientId.equals("exit")) {
                 continuar = false;
             } else {
                 try {
 
                     int id = Integer.parseInt(clientId);
-                    ClientDAO clientDAO = new ClientDAO();
                     client = clientDAO.getClientById(id);
 
-                    executarModoCliente(sc, client, ProductDAO);
+                    executarModoCliente(sc, client, productDAO);
 
                 } catch (NumberFormatException e) {
                     System.out.println("ID inválido! Tente novamente.");
@@ -35,7 +32,7 @@ public class Main {
         }
     }
 
-    private static void executarModoAdministrador(Scanner sc, ProductDAO productDAO, SqlFunctions SQL) {
+    private static void executarModoAdministrador(Scanner sc, ProductDAO productDAO, ClientDAO clientDAO) {
         boolean modoAdm = true;
 
         while (modoAdm) {
@@ -60,9 +57,9 @@ public class Main {
                     System.out.println("3. Alterar saldo de cliente");
                     System.out.println("'exit' para sair");
                     System.out.println("------------------------------------");
-                    String opcao = sc.nextLine().trim();
+                    String option = sc.nextLine().trim();
 
-                    switch (opcao) {
+                    switch (option) {
                         case "1":
                             adicionarProduto(sc, productDAO);
                             break;
@@ -70,7 +67,7 @@ public class Main {
                             alterarProduto(sc, productDAO);
                             break;
                         case "3":
-                            alterarSaldoCliente(sc, SQL);
+                            alterarSaldoCliente(sc, clientDAO);
                             break;
                         case "exit":
                             continuar = false;
@@ -145,26 +142,28 @@ public class Main {
         System.out.println("Produto atualizado com sucesso!");
     }
 
-    private static void alterarSaldoCliente(Scanner sc, SqlFunctions SQL) {
+    private static void alterarSaldoCliente(Scanner sc, ClientDAO clientDAO) {
         System.out.println("ALTERAR SALDO DE CLIENTE");
         System.out.println("'exit' para cancelar");
         System.out.println("----------------");
 
         System.out.println("Insira o ID do cliente:");
-        String idCliente = sc.nextLine().trim();
-        if (idCliente.equals("exit")) return;
+        String clientId = sc.nextLine().trim();
+        if (clientId.equals("exit")){
+            return;
+        }
 
-        int id = Integer.parseInt(idCliente);
-        ClientDAO clientDAO = new ClientDAO();
-        Client c = clientDAO.getClientById(id);
-        c.showClient();
+        int id = Integer.parseInt(clientId);
+
+        Client client = clientDAO.getClientById(id);
+        client.showClient();
 
         System.out.println("Insira o novo saldo:");
-        double novoSaldo = sc.nextDouble();
+        double newBalance = sc.nextDouble();
         sc.nextLine(); // Limpar buffer
 
+        clientDAO.setClientBalance(client, newBalance);
 
-        c.setBalance(novoSaldo);
         System.out.println("Saldo atualizado com sucesso!");
     }
 
