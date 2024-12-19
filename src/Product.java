@@ -1,79 +1,49 @@
 
+import DataBase.DatabaseConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class Product {
 
     private final int id;
-    private final String nome;
-    private final double preco;
-    private int quantidade;
+    private final String name;
+    private final double price;
+    private int quantity;
 
-    public Product(int id) {
-        SqlFunctions sql = new SqlFunctions();
-
-        ArrayList<String> items;
-
-        items = sql.selectById("PRODUTO", id);
-
-        this.id = Integer.parseInt(items.get(0));
-        this.nome = items.get(1);
-        this.preco = Double.parseDouble(items.get(2));
-        this.quantidade = Integer.parseInt(items.get(3));
+    public Product(int id, String name, double price, int quantity){
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
     }
 
-    public Product(String nome) {
-        SqlFunctions sql = new SqlFunctions();
-
-        ArrayList<String> itens;
-
-        itens = sql.selectByName("PRODUTO", nome);
-
-        this.id = Integer.parseInt(itens.get(0));
-        this.nome = itens.get(1);
-        this.preco = Double.parseDouble(itens.get(2));
-        this.quantidade = Integer.parseInt(itens.get(3));
+    public void showProduct(){
+        System.out.println(id + ". " + name.toUpperCase() + " - R$" + String.format("%.2f", price) + " | QUANTIDADE: " + quantity);
     }
 
-//    public void imprimir() {
-//        DecimalFormat df = new DecimalFormat("#.00");
-//        System.out.println("PRODUTO " + id + ":");
-//        System.out.println(nome);
-//        System.out.println("Preço: " + df.format(preco));
-//        System.out.println("Estoque: " + quantidade);
-//    }
-
-    public int getId() {
-        return id;
+    public double getPrice() {
+        return price;
     }
 
-//    public String getNome() {
-//        return nome;
-//    }
-
-    public double getPreco() {
-        return preco;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public int getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(int quantidade) {
-        if(quantidade >= 0) {
-            this.quantidade = quantidade;
+    public void setQuantity(int quantity) {
+        if(quantity >= 0) {
+            this.quantity = quantity;
             String updateQuery = "UPDATE PRODUTO SET quantidade = ? WHERE id = ?";
 
             try (Connection connection = DatabaseConnection.getConnection();
-                 PreparedStatement stmt = connection.prepareStatement(updateQuery)) {
+                 PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
 
                 // Define os parâmetros
-                stmt.setInt(1, quantidade);
-                stmt.setInt(2, id);
+                preparedStatement.setInt(1, quantity);
+                preparedStatement.setInt(2, id);
 
-                stmt.executeUpdate();
+                preparedStatement.executeUpdate();
             } catch (SQLException e) {
                 System.out.println("Erro ao atualizar a quantidade do produto");
                 e.printStackTrace(System.err);

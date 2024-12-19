@@ -1,57 +1,42 @@
 
+import DataBase.DatabaseConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class Client {
 
     private final int id;
-    private final String nome;
-    private double saldo;
+    private final String name;
+    private double balance;
 
-    public Client(int id) {
-        SqlFunctions sql = new SqlFunctions();
-
-        ArrayList<String> items;
-
-        items = sql.selectById("CLIENTE", id);
-
-        this.id = Integer.parseInt(items.get(0));
-        this.nome = items.get(1);
-        this.saldo = Double.parseDouble(items.get(2));
+    public Client(int id, String name, double balance) {
+        this.id = id;
+        this.name = name;
+        this.balance = balance;
     }
 
-//    public Client getClienteById(int id) {
-//        return new Client(id);
-//    }
-
-//    public void imprimir() {
-//        DecimalFormat df = new DecimalFormat("#.00");
-//        System.out.println(nome);
-//        System.out.println("Saldo: " + df.format(saldo));
-//    }
-
-//    public int getId() {
-//        return id;
-//    }
-
-    public String getNome() {
-        return nome;
+    public void showClient(){
+        System.out.println(formatName() + " - ID: " + id + " | Saldo: " + String.format("%.2f", balance));
     }
 
-    public double getSaldo() {
-        return saldo;
+    public String getName() {
+        return name;
     }
 
-    public void setSaldo(double saldo) {
-        this.saldo = saldo;
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
         String updateQuery = "UPDATE CLIENTE SET saldo = ? WHERE id = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(updateQuery)) {
 
-            stmt.setDouble(1, saldo);
+            stmt.setDouble(1, balance);
             stmt.setInt(2, id);
 
             stmt.executeUpdate();
@@ -59,5 +44,9 @@ public class Client {
             System.out.println("Erro ao atualizar o saldo do cliente");
             e.printStackTrace(System.err);
         }
+    }
+
+    public String formatName(){
+        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 }

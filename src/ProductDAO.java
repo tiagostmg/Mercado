@@ -1,79 +1,69 @@
+import DataBase.SqlFunctions;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 
 public class ProductDAO {
 
-    public void showProducts(String comando) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(comando);
+    public Product getProductById(int id) {
+        SqlFunctions sql = new SqlFunctions();
 
-            System.out.println("------------------------------------");
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String nome = rs.getString("nome");
-                double preco = rs.getDouble("preco");
-                int quantidade = rs.getInt("quantidade");
+        ArrayList<String> items;
 
-                System.out.println(id + ". " + nome.toUpperCase() + " - R$" + String.format("%.2f", preco) + " | QUANTIDADE: " + quantidade);
-            }
-            System.out.println("------------------------------------");
-        }
-        catch (SQLException e) {
-            System.out.println("Erro ao realizar a consulta");
-            e.printStackTrace(System.err);
-        }
+        items = sql.selectById("PRODUTO", id);
+
+        id = Integer.parseInt(items.get(0));
+        String name = items.get(1);
+        double price = Double.parseDouble(items.get(2));
+        int quantity = Integer.parseInt(items.get(3));
+
+        return new Product(id, name, price, quantity);
     }
 
-    public void insert(String nomeProduto, int qtdProduto, double precoProduto) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            String insertSQL = "INSERT INTO PRODUTO (nome, quantidade, preco) VALUES (?, ?, ?)";
+    public Product getProductByName(String name) {
+        SqlFunctions sql = new SqlFunctions();
 
-            PreparedStatement pstmt = connection.prepareStatement(insertSQL);
+        ArrayList<String> items;
 
-            pstmt.setString(1, nomeProduto.toLowerCase());
-            pstmt.setInt(2, qtdProduto);
-            pstmt.setDouble(3, precoProduto);
+        items = sql.selectByName("PRODUTO", name);
 
-            int rowsAffected = pstmt.executeUpdate();
+        int id = Integer.parseInt(items.get(0));
+        name = items.get(1);
+        double price = Double.parseDouble(items.get(2));
+        int quantity = Integer.parseInt(items.get(3));
 
-            if (rowsAffected > 0) {
-                Product p = new Product(nomeProduto.toLowerCase());
-                System.out.println("------------------------------------");
-                System.out.println("Produto adicionado com sucesso:");
-                System.out.println(p.getId() + ". " + nomeProduto.toUpperCase() + " - R$" + String.format("%.2f", precoProduto) + " | QUANTIDADE: " + qtdProduto);
-                System.out.println("------------------------------------");
+        return new Product(id, name, price, quantity);
+    }
 
-            } else {
-                System.out.println("Falha ao adicionar o produto.");
-            }
+    public void insertProduct(String productName, int productQty, double productPrice) {
+        String insertSQL = "INSERT INTO PRODUTO (nome, quantidade, preco) VALUES (?, ?, ?)";
+
+        try {
+            SqlFunctions SQL = new SqlFunctions();
+            String formattedSQL = SQL.formatSQL(insertSQL, productName.toLowerCase(), productQty, productPrice);
+            SQL.insert(formattedSQL);
+
+            System.out.println("Produto adicionado com sucesso:");
+            ProductDAO productDAO = new ProductDAO();
+            productDAO.getProductByName(productName.toLowerCase()).showProduct();
+
         } catch (SQLException e) {
             System.out.println("Erro ao inserir o produto no banco de dados.");
             e.printStackTrace(System.err);
         }
     }
 
-    public static void update(int id, String nomeProduto, int qtdProduto, double precoProduto) {
+    public static void updateProduct(int id, String productName, int productQty, double productPrice) {
         String updateQuery = "UPDATE PRODUTO SET nome = ?, quantidade = ?, preco = ? WHERE id = ?";
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(updateQuery)) {
+        try {
+            SqlFunctions SQL = new SqlFunctions();
+            String formattedSQL = SQL.formatSQL(updateQuery, productName, productQty, productPrice, id);
+            SQL.update(formattedSQL);
 
-            stmt.setString(1, nomeProduto);  // Nome do produto
-            stmt.setInt(2, qtdProduto);      // Quantidade do produto
-            stmt.setDouble(3, precoProduto); // Preço do produto
-            stmt.setInt(4, id);              // ID do produto a ser alterado
-
-            int rowsAffected = stmt.executeUpdate(); // Executa o UPDATE
-            if (rowsAffected > 0) {
-                System.out.println("Produto alterado com sucesso.");
-            } else {
-                System.out.println("Erro: Produto não encontrado.");
-            }
+            System.out.println("Produto alterado com sucesso.");
+            ProductDAO productDAO = new ProductDAO();
+            productDAO.getProductByName(productName.toLowerCase()).showProduct();
 
         } catch (SQLException e) {
             System.out.println("Erro ao alterar o produto.");
@@ -81,22 +71,4 @@ public class ProductDAO {
         }
     }
 
-//    public int qtdItens(String tabela) {
-//        int result = 0;
-//
-//        try (Connection connection = DatabaseConnection.getConnection()) {
-//            Statement stmt = connection.createStatement();
-//            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM " + tabela);
-//
-//            if (rs.next()) {
-//                result = rs.getInt(1);
-//            }
-//        }
-//        catch (SQLException e) {
-//            System.out.println("Erro ao realizar a consulta");
-//            e.printStackTrace(System.err);
-//        }
-//        return result;
-//
-//    }
 }
